@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
-import { AppBar, Box, Button, Divider, Paper, Stack, styled, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, Button, Card, Divider, Paper, Stack, styled, Toolbar, Typography } from '@mui/material'
 import Logofile from './assets/logo.png'
 import Codeblock from './components/codeblock';
-import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
+import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+import { TriggerLists } from './BlockConfigs';
 
 const Logo = styled('img')
 (
@@ -10,6 +11,7 @@ const Logo = styled('img')
     height:"25px",
   }
 );
+
 
 
 function App() {
@@ -49,54 +51,129 @@ function App() {
         onDragEnd={onDragEnd}
       >
 
+        {/*左右分割 */}
         <Stack direction='row' divider={<Divider orientation="vertical" flexItem />}>
 
+          {/*左　コードスペース */}
+          <Stack gap={3} sx={{m:3, flexGrow:1}}>
+            <Box>
+              <Typography variant='h6'>コード</Typography>
+              <Typography sx={{fontSize:10, color:"#909090"}}>ここにコードを書いてください</Typography>  
+            </Box>
 
-          <Box sx={{m:3, flexGrow:1}}>
-            <Droppable droppableId="CodeArea">
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                >
-                
-                <Paper elevation={3} sx={{ p: 3}}>
-                  <Typography variant='h5'>コード</Typography>
-                  <Typography sx={{fontSize:13, color:"#909090"}}>ここにロボットのコードを書いてください</Typography>
+            {/* map関数でDropableを展開 */}
+            {TriggerLists.map((Trigger, index)=>(
+
+              <Droppable droppableId={"Handle-" + index.toString()} key={"handle--" + index.toString()}>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
                   
-                  <Stack>
+                  <Paper elevation={3} sx={{ p: 3}}>
+                    <Typography variant='body1'>{Trigger.Name}</Typography>
                     
-                    <Codeblock heading={"hello"} index={0}/>
-                    <Codeblock heading={"hello"} index={1}/>
+                    <Stack gap={1} sx={{mt:2, p:2, backgroundColor:"#F0F0F0", borderRadius:"5px"}}>
+                      <Codeblock heading={"hello"} index={index} />
+                      <Codeblock heading={"hi"} index={index*100} />
+                      
+                      {provided.placeholder}
+                    </Stack>
+                    
+                  </Paper>
 
-                  </Stack>
+                    
+                    
+                  </div>
+                )}
+              </Droppable>
+            ))}
+            
 
-                  {provided.placeholder}
-                
-                </Paper>
-
-                  
-                  
-                </div>
-              )}
-            </Droppable>
-          </Box>
+          </Stack>
           
 
             
+          {/* 右 */}
+          <Stack gap={3} sx={{flexGrow:1, mt:3, position:"sticky", top:80, height:'90vh'}}>
+            <Box sx={{ml:3}}>
+              <Box>
+                <Typography variant='h6'>パレット</Typography>
+                <Typography sx={{fontSize:10, color:"#909090"}}>ここからブロックを取ってください</Typography>  
+              </Box>
+              <Box sx={{mr:2, mt:3}}>
+                
+                <Paper elevation={3} sx={{p:2}}>
+                  <Paper elevation={0} sx={{p:2, backgroundColor:"#F0F0F0"}}>
+                    <Droppable droppableId={"Maker"} key={"Maker"}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                        >
+                            <Codeblock heading={"bonjour"} index={1010} />
+                              
+                              {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </Paper>
+                
+                </Paper>
 
-          <Stack sx={{flexGrow:1, p:2}}>
-            <Paper elevation={3} sx={{ p: 3, position:"sticky", top:72}}>
-              <Typography variant='h5'>パレット</Typography>
-              <Typography sx={{fontSize:13, color:"#909090"}}>ここからブロックを取ってください</Typography>
+              </Box>
+            </Box>
+           
+            <Box sx={{p:1, overflowY:'scroll'}}>
+              <Paper elevation={3} sx={{ p: 3, ml:1}}>
+                
+                {/* 以下にブロック */}
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
+                <Card sx={{p:3}}>
+                hello
+                </Card>
               
-              {/* 以下にブロック */}
+
+              </Paper>
 
 
-
-            </Paper>
-
-
+            </Box>
           </Stack>
           
         </Stack>
