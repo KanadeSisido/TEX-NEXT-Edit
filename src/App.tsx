@@ -64,7 +64,7 @@ function App() {
             {/* map関数でDropableを展開 */}
             {TriggerLists.map((Trigger, index)=>(
 
-              <Droppable droppableId={"Handle-" + index.toString()}>
+              <Droppable droppableId={"Handle-" + index.toString()} key={"handle--" + index.toString()}>
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
@@ -76,6 +76,8 @@ function App() {
                     
                     <Stack gap={1} sx={{mt:2, p:2, backgroundColor:"#F0F0F0", borderRadius:"5px"}}>
                       <Codeblock heading={"hello"} index={index} />
+                      <Codeblock heading={"hi"} index={index*100} />
+                      
                       {provided.placeholder}
                     </Stack>
                     
@@ -102,9 +104,21 @@ function App() {
               </Box>
               <Box sx={{mr:2, mt:3}}>
                 
-                <Paper elevation={3} sx={{p:3}}>
-
-                  
+                <Paper elevation={3} sx={{p:2}}>
+                  <Paper elevation={0} sx={{p:2, backgroundColor:"#F0F0F0"}}>
+                    <Droppable droppableId={"Maker"} key={"Maker"}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                        >
+                            <Codeblock heading={"bonjour"} index={1010} />
+                              
+                              {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </Paper>
                 
                 </Paper>
 
