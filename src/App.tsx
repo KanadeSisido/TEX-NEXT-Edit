@@ -60,43 +60,49 @@ function App() {
               <Typography variant='h6'>コード</Typography>
               <Typography sx={{fontSize:10, color:"#909090"}}>ここにコードを書いてください</Typography>  
             </Box>
-
-            {/* map関数でDropableを展開 */}
-            {TriggerLists.map((Trigger, index)=>(
-
-              <Droppable droppableId={"Handle-" + index.toString()} key={"handle--" + index.toString()}>
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                  
-                  <Paper elevation={3} sx={{ p: 3}}>
-                    <Typography variant='body1'>{Trigger.Name}</Typography>
-                    
-                    <Stack gap={1} sx={{mt:2, p:2, backgroundColor:"#F0F0F0", borderRadius:"5px"}}>
-                      <Codeblock heading={"hello"} index={index} />
-                      <Codeblock heading={"hi"} index={index*100} />
-                      
-                      {provided.placeholder}
-                    </Stack>
-                    
-                  </Paper>
-
-                    
-                    
-                  </div>
-                )}
-              </Droppable>
-            ))}
+            <Paper elevation={3} sx={{p:2}}>
             
+             <Stack gap={3}>
+              <Typography sx={{fontSize:12, color:"#909090"}}>ROBOT - Main</Typography>
+
+                {/* map関数でDropableを展開 */}
+                {TriggerLists.map((Trigger, index)=>(
+
+                  <Droppable droppableId={"Handle-" + index.toString()} key={"handle--" + index.toString()}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        >
+                      
+                      <Paper elevation={1} sx={{ p: 2}}>
+                        <Typography variant='body1'>{Trigger.Name}</Typography>
+                        
+                        <Stack gap={1} sx={{mt:2, p:2, backgroundColor:"#F0F0F0", borderRadius:"5px"}}>
+                          <Codeblock heading={"hello"} index={index} />
+                          <Codeblock heading={"hi"} index={index*100} />
+                          
+                          {provided.placeholder}
+                        </Stack>
+                        
+                      </Paper>
+
+                        
+                        
+                      </div>
+                    )}
+                  </Droppable>
+                ))}
+              
+              </Stack>
+            </Paper>
 
           </Stack>
           
 
             
           {/* 右 */}
-          <Stack gap={3} sx={{flexGrow:1, mt:3, position:"sticky", top:80, height:'90vh'}}>
+          <Stack gap={3} sx={{flexGrow:1, mt:3, position:"sticky", top:89, height:'90vh'}}>
             <Box sx={{ml:3}}>
               <Box>
                 <Typography variant='h6'>パレット</Typography>
