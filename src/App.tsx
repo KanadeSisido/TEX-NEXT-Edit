@@ -1,9 +1,16 @@
 import { useCallback } from 'react';
-import { AppBar, Box, Button, Card, Divider, Paper, Stack, styled, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, Button, Divider, Paper, Stack, styled, Toolbar, Typography } from '@mui/material'
 import Logofile from './assets/logo.png'
-import Codeblock from './components/codeblock';
+import Codeblock from './components/Codeblocks/codeblock';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { TriggerLists } from './BlockConfigs';
+import AddButton from './components/addButton';
+import ControlCameraIcon from '@mui/icons-material/ControlCamera';
+import AddbuttonListItem from './components/addbuttonListItem';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
+import SyncAltIcon from '@mui/icons-material/SyncAlt';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 
 const Logo = styled('img')
 (
@@ -77,10 +84,15 @@ function App() {
                       
                       <Paper elevation={1} sx={{ p: 2}}>
                         <Typography variant='body1'>{Trigger.Name}</Typography>
+                        <Typography variant='body2' sx={{color:"#909090", fontSize:"12px"}}>{Trigger.AlternativeName}</Typography>
                         
                         <Stack gap={1} sx={{mt:2, p:2, backgroundColor:"#F0F0F0", borderRadius:"5px"}}>
-                          <Codeblock heading={"hello"} index={index} />
-                          <Codeblock heading={"hi"} index={index*100} />
+                          <Codeblock Name={"ロボットを動かす"} AlternativeName='ロボットをうごかす' index={index}>
+                            hello
+                          </Codeblock>
+                          <Codeblock Name={"ロボットを回転させる"} AlternativeName='ロボットをまわす' index={index*100}>
+
+                          </Codeblock>
                           
                           {provided.placeholder}
                         </Stack>
@@ -102,8 +114,8 @@ function App() {
 
             
           {/* 右 */}
-          <Stack gap={3} sx={{flexGrow:1, mt:3, position:"sticky", top:89, height:'90vh'}}>
-            <Box sx={{ml:3}}>
+          <Stack gap={3} direction="row" sx={{flexGrow:1, mt:3, position:"sticky", top:89, height:'90vh'}}>
+            <Box sx={{ml:3, flexGrow:1}}>
               <Box>
                 <Typography variant='h6'>パレット</Typography>
                 <Typography sx={{fontSize:10, color:"#909090"}}>ここからブロックを取ってください</Typography>  
@@ -118,9 +130,9 @@ function App() {
                           ref={provided.innerRef}
                           {...provided.droppableProps}
                         >
-                            <Codeblock heading={"bonjour"} index={1010} />
+                            <Codeblock Name={"青色のLEDを光らせる"} AlternativeName='あおいろのLEDをひからせる' index={1010} />
                               
-                              {provided.placeholder}
+                            {provided.placeholder}
                         </div>
                       )}
                     </Droppable>
@@ -131,49 +143,29 @@ function App() {
               </Box>
             </Box>
            
-            <Box sx={{p:1, overflowY:'scroll'}}>
+            <Box sx={{p:1, flexGrow:1, overflowY:'scroll'}}>
               <Paper elevation={3} sx={{ p: 3, ml:1}}>
                 
                 {/* 以下にブロック */}
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
-                <Card sx={{p:3}}>
-                hello
-                </Card>
+                <AddButton name='ロボットを動かす'>
+                  <AddbuttonListItem Name='ロボットを移動させる' NameAlternative='ロボットをいどうさせる' icon={<ControlCameraIcon />}/>
+                  <AddbuttonListItem Name='ロボットを回転させる' NameAlternative='ロボットをまわす' icon={<ControlCameraIcon/>}/>
+                </AddButton>
+                
+                <AddButton name='ハンドを動かす'>
+                  <AddbuttonListItem Name='ハンドを上下に動かす' NameAlternative='ハンドをじょうげにうごかす' icon={<SwapVertIcon/>}/>
+                  <AddbuttonListItem Name='ハンドを開閉させる' NameAlternative='ハンドをひらく・とじる' icon={<SyncAltIcon/>}/>
+                </AddButton>
+                
+                <AddButton name='LEDを光らせる'>
+                  <AddbuttonListItem Name='赤色のLEDを光らせる・消す' NameAlternative='あかいろのLEDをひからせる・けす' icon={<LightModeIcon/>}/>
+                  <AddbuttonListItem Name='青色のLEDを光らせる・消す' NameAlternative='あおいろのLEDをひからせる・けす' icon={<LightModeIcon/>}/>
+                  <AddbuttonListItem Name='緑色のLEDを光らせる・消す' NameAlternative='みどりいろのLEDをひからせる・けす' icon={<LightModeIcon/>}/>
+                </AddButton>
+                <AddButton name='時間を待つ'>
+                  <AddbuttonListItem Name='待機する' NameAlternative='じかんをまつ' icon={<AccessAlarmIcon/>}/>
+                </AddButton>
+                
               
 
               </Paper>

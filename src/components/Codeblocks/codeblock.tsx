@@ -1,10 +1,13 @@
-import { Card, Typography } from "@mui/material"
+import { Card, Stack, Typography } from "@mui/material"
 import { Draggable } from "@hello-pangea/dnd";
+import { ReactNode } from "react";
 
 
 type pr = {
-    heading : String,
+    Name : string,
+    AlternativeName: string,
     index : number,
+    children?: ReactNode,
 };
 
 const Codeblock = (props: pr) => {
@@ -26,7 +29,12 @@ const Codeblock = (props: pr) => {
             p: 3,
             
             }}>
-            <Typography>{props.heading}</Typography>
+              <Stack direction='row' >
+                <Typography sx={{flexGrow:1}}>{props.Name}</Typography>
+                
+                {props.children}
+              </Stack>
+            
           </Card>
         </div>
       )}
