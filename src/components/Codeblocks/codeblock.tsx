@@ -1,4 +1,4 @@
-import { Card, Stack, Typography } from "@mui/material"
+import { Box, Card, Stack, Typography } from "@mui/material"
 import { Draggable } from "@hello-pangea/dnd";
 import { ReactNode } from "react";
 
@@ -6,13 +6,16 @@ import { ReactNode } from "react";
 type pr = {
     Name : string,
     AlternativeName: string,
-    index : number,
+    id : string,
+    index: number,
+    icon: ReactNode,
     children?: ReactNode,
 };
 
 const Codeblock = (props: pr) => {
+  console.log(props.id);
   return (
-    <Draggable draggableId={"draggable-"+ props.index.toString()} index={props.index}>
+    <Draggable draggableId={props.id} index={props.index}>
       {(provided, snapshot) => (
         
         <div
@@ -26,11 +29,15 @@ const Codeblock = (props: pr) => {
         >
           <Card elevation={1} sx={{
             maxWidth:"500px",
-            p: 3,
+            p: 2,
             
             }}>
-              <Stack direction='row' >
-                <Typography sx={{flexGrow:1}}>{props.Name}</Typography>
+              <Stack direction='row' sx={{alignItems:"center"}}>
+                {props.icon}
+                <Box sx={{ml:2, flexGrow:1}}>
+                  <Typography >{props.Name}</Typography>
+                  <Typography sx={{color:"#909090", fontSize:"12px"}}>{props.AlternativeName}</Typography>
+                </Box>
                 
                 {props.children}
               </Stack>
