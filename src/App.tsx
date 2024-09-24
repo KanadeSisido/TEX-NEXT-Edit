@@ -44,11 +44,10 @@ function App() {
   }, []);
 
 
-  const [blocks, setBlocks] = useState([{}]);
-  const [staged, setStaged] = useState({
-    id: 0,
-    spawn: <></>,
-  });
+  const [blocks, setBlocks] = useState([[<>h</>,<>e</>],[],[],[],[],[],[],[],[],[],[],[],[]]);
+  const [statements, setStatements] = useState([[],[],[],[],[],[],[],[],[],[],[],[],[]]);
+
+  const [staged, setStaged] = useState(<></>);
 
 
 
@@ -106,8 +105,14 @@ function App() {
                         <Stack gap={1} sx={{mt:2, p:2, backgroundColor:"#F0F0F0", borderRadius:"5px"}}>
                           
                           {/*ここにブロックが入る */}
+                          {blocks[index].map((block,i)=>(
+                            
+                            block
+
+                          ))}
                           
                           {provided.placeholder}
+
                         </Stack>
 
                         </div>
@@ -145,7 +150,7 @@ function App() {
 
                           {/* ここにブロック */}
                           
-                          {staged.spawn}
+                          {staged}
 
                           {provided.placeholder}
                         </div>

@@ -52,10 +52,7 @@ const AddbuttonListItem = (props: pr) => {
     <ListItem disablePadding>
         <ListItemButton onClick={()=>{
           
-          props.setStaged({
-            id: id,
-            spawn: spawn,
-          });
+          props.setStaged(spawn);
 
         }}>
           <ListItemIcon>
