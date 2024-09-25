@@ -1,19 +1,31 @@
-import { Box, Card, Stack, Typography } from "@mui/material"
+import { Box, Card, IconButton, Stack, Typography } from "@mui/material"
 import { Draggable } from "@hello-pangea/dnd";
 import { ReactNode } from "react";
-
+import DeleteIcon from '@mui/icons-material/Delete';
 
 type pr = {
     Name : string,
     AlternativeName: string,
     id : string,
+    
+    Delete: Function,
+    setVis: Function,
+
+    GroupIndex: number,
     index: number,
+
     icon: ReactNode,
     children?: ReactNode,
 };
 
 const Codeblock = (props: pr) => {
-  console.log(props.id);
+
+  const HandleDelete = () => {
+
+    props.Delete(props.GroupIndex, props.index);
+    props.setVis(false);
+  }
+
   return (
     <Draggable draggableId={props.id} index={props.index}>
       {(provided, snapshot) => (
@@ -40,6 +52,8 @@ const Codeblock = (props: pr) => {
                 </Box>
                 
                 {props.children}
+                <Box sx={{flexGrow: 1}}></Box>
+                <IconButton onClick={HandleDelete}><DeleteIcon/></IconButton>
               </Stack>
             
           </Card>

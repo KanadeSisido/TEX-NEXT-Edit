@@ -9,6 +9,7 @@ import { codeblockindex } from './components/Codeblocks/codeblockindex';
 import {v4 as uuid} from "uuid";
 
 import ControlCameraIcon from '@mui/icons-material/ControlCamera';
+import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -23,11 +24,10 @@ const Logo = styled('img')
   }
 );
 
-type stagedType = {
+export type BlockType = {
 
-  index : number,
   id: string,
-  value: number,
+  value?: string,
   component: string,
 
 }
@@ -35,13 +35,57 @@ type stagedType = {
 
 function App() {
 
-  const [blocks, setBlocks] = useState<(stagedType | null)[][]>([[],[],[],[],[],[],[],[],[],[],[],[],[]]);
+  const [blocks, setBlocks] = useState<(BlockType | null)[][]>([[],[],[],[],[],[],[],[],[],[],[],[],[]]);
 
-  const [staged, setStaged] = useState<stagedType | null>();
+  const [staged, setStaged] = useState<BlockType | null>();
+
+
+  function Update(GroupIndex: number, Index: number, Value: string){
+
+    if(GroupIndex == -1 && Index == -1)
+    {
+      if(staged)
+      {
+        setStaged({id:staged.id, value: Value, component:staged.component});
+      }
+
+      console.log(staged);
+      return;
+    }
+
+    var _blocks = blocks;
+
+    if(_blocks[GroupIndex][Index])
+    {
+      _blocks[GroupIndex][Index].value = Value;
+    }
+
+    console.log("a");
+
+    setBlocks(_blocks);
+    console.log(blocks);
+    
+  }
+
+  function Delete(GroupIndex: number, Index: number){
+
+    if(GroupIndex == -1 && Index == -1)
+    {
+      setStaged(null);
+      
+      return;
+    }
+
+    var _blocks = blocks;
+
+    _blocks[GroupIndex].splice(Index, 1);
+
+    setBlocks(_blocks);
+  }
+
 
   const onDragEnd = (result: DropResult) => {
 
-    console.log(result);
     const {source, destination} = result;
 
     //パレットから
@@ -61,13 +105,19 @@ function App() {
         console.log(blocks);
       }
      
+      return;
 
+    }
+
+    if(destination?.droppableId == 'Maker')
+    {
+      return;
     }
 
     //同じところ
     if ( source.droppableId === destination?.droppableId)
     {
-      const index = TriggerLists.findIndex((element)=>element.id === source.droppableId);
+      const index = TriggerLists.findIndex((element)=>element.id == source.droppableId);
       const _blocks = blocks;
       const _insertdata = _blocks[index][source.index];
 
@@ -81,19 +131,19 @@ function App() {
     {
       if (destination)
       {
-        const sourceIndex = TriggerLists.findIndex((element)=>element.id === source.droppableId);
-        const destIndex = TriggerLists.findIndex((element)=>element.id === destination.droppableId);
+        const sourceIndex = TriggerLists.findIndex((element)=>element.id == source.droppableId);
+        const destIndex = TriggerLists.findIndex((element)=>element.id == destination.droppableId);
         
         const _blocks = blocks;
         const _insertdata = _blocks[sourceIndex][source.index];
 
         _blocks[sourceIndex].splice(source.index, 1);
         _blocks[destIndex].splice(destination.index, 0, _insertdata);
+
+        setBlocks(_blocks);
       }
       
     }
-
-    TriggerLists.findIndex((element)=>{element.id === source.droppableId})
 
   };
 
@@ -110,9 +160,7 @@ function App() {
       </AppBar>
 
 
-      <DragDropContext
-        onDragEnd={onDragEnd}
-      >
+      <DragDropContext onDragEnd={onDragEnd}>
 
         {/*左右分割 */}
         <Stack direction='row' divider={<Divider orientation="vertical" flexItem />}>
@@ -138,7 +186,7 @@ function App() {
                     <Typography variant='body2' sx={{color:"#909090", fontSize:"12px"}}>{Trigger.AlternativeName}</Typography>
                     
                     <Droppable droppableId={Trigger.id} key={uuid()}>
-                      {(provided, snapshot) => (
+                      {(provided) => (
                         <div
                           ref={provided.innerRef}
                           {...provided.droppableProps}
@@ -151,7 +199,7 @@ function App() {
                             
                             // ここにブロック
                             <>
-                              {block? cloneElement(codeblockindex[block.component] as ReactElement, { index: i, id: block.id }) : <></>}
+                              {block? cloneElement(codeblockindex[block.component] as ReactElement, { index: i, GroupIndex: index, data: block, Update: Update, Delete: Delete} ) : <></>}
                             </>
 
                           ))}
@@ -187,7 +235,7 @@ function App() {
                 <Paper elevation={3} sx={{p:2}}>
                   <Paper elevation={0} sx={{p:2, backgroundColor:"#F0F0F0"}}>
                     <Droppable droppableId={"Maker"} key={"Maker"}>
-                      {(provided, snapshot) => (
+                      {(provided) => (
                         <div
                           ref={provided.innerRef}
                           {...provided.droppableProps}
@@ -196,7 +244,7 @@ function App() {
                           {/* ここにブロック */}
 
                           <>
-                            {staged? cloneElement(codeblockindex[staged.component] as ReactElement, { index: 0, id: staged.id }): <></>}
+                            {staged? cloneElement(codeblockindex[staged.component] as ReactElement, { index: -1, GroupIndex: -1, data: staged, Update: Update, Delete: Delete}): <></>}
                           </>
 
                           {provided.placeholder}
@@ -216,22 +264,22 @@ function App() {
                 
                 {/* 以下にブロック */}
                 <AddButton name='ロボットを動かす'>
-                  <AddbuttonListItem Name='ロボットを移動させる' NameAlternative='ロボットをいどうさせる' icon={<ControlCameraIcon />} onclick={ ()=>setStaged({index : 0, id: uuid(), value: 0, component: 'move'})}/>
-                  <AddbuttonListItem Name='ロボットを回転させる' NameAlternative='ロボットをまわす' icon={<ControlCameraIcon/>} onclick={ ()=>setStaged({index : 0, id: uuid(), value: 0, component: 'rot'})}/>
+                  <AddbuttonListItem Name='ロボットを移動させる' NameAlternative='ロボットをいどうさせる' icon={<ControlCameraIcon />} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'move'})}/>
+                  <AddbuttonListItem Name='ロボットを回転させる' NameAlternative='ロボットをまわす' icon={<ThreeSixtyIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'rot'})}/>
                 </AddButton>
                 
                 <AddButton name='ハンドを動かす'>
-                  <AddbuttonListItem Name='ハンドを上下に動かす' NameAlternative='ハンドをじょうげにうごかす' icon={<SwapVertIcon/>} onclick={ ()=>setStaged({index : 0, id: uuid(), value: 0, component: 'handud'})}/>
-                  <AddbuttonListItem Name='ハンドを開閉させる' NameAlternative='ハンドをひらく・とじる' icon={<SyncAltIcon/>} onclick={ ()=>setStaged({index : 0, id: uuid(), value: 0, component: 'handoc'})}/>
+                  <AddbuttonListItem Name='ハンドを上下に動かす' NameAlternative='ハンドをじょうげにうごかす' icon={<SwapVertIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'handud'})}/>
+                  <AddbuttonListItem Name='ハンドを開閉させる' NameAlternative='ハンドをひらく・とじる' icon={<SyncAltIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'handoc'})}/>
                 </AddButton>
                 
                 <AddButton name='LEDを光らせる'>
-                  <AddbuttonListItem Name='赤色のLEDを光らせる・消す' NameAlternative='あかいろのLEDをひからせる・けす' icon={<LightModeIcon/>} onclick={ ()=>setStaged({index : 0, id: uuid(), value: 0, component: 'r_led'})}/>
-                  <AddbuttonListItem Name='緑色のLEDを光らせる・消す' NameAlternative='みどりいろのLEDをひからせる・けす' icon={<LightModeIcon/>} onclick={ ()=>setStaged({index : 0, id: uuid(), value: 0, component: 'g_led'})}/>
-                  <AddbuttonListItem Name='青色のLEDを光らせる・消す' NameAlternative='あおいろのLEDをひからせる・けす' icon={<LightModeIcon/>} onclick={ ()=>setStaged({index : 0, id: uuid(), value: 0, component: 'b_led'})}/>
+                  <AddbuttonListItem Name='赤色のLEDを光らせる・消す' NameAlternative='あかいろのLEDをひからせる・けす' icon={<LightModeIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'r_led'})}/>
+                  <AddbuttonListItem Name='緑色のLEDを光らせる・消す' NameAlternative='みどりいろのLEDをひからせる・けす' icon={<LightModeIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'g_led'})}/>
+                  <AddbuttonListItem Name='青色のLEDを光らせる・消す' NameAlternative='あおいろのLEDをひからせる・けす' icon={<LightModeIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'b_led'})}/>
                 </AddButton>
                 <AddButton name='時間を待つ'>
-                  <AddbuttonListItem Name='待機する' NameAlternative='じかんをまつ' icon={<AccessAlarmIcon/>} onclick={ ()=>setStaged({index : 0, id: uuid(), value: 0, component: 'wait'})}/>
+                  <AddbuttonListItem Name='待機する' NameAlternative='じかんをまつ' icon={<AccessAlarmIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'wait'})}/>
                 </AddButton>
                 
               
