@@ -1,7 +1,7 @@
 import { cloneElement, ReactElement, useCallback, useState } from 'react';
 import { AppBar, Box, Button, Divider, Paper, Stack, styled, Toolbar, Typography } from '@mui/material'
 import Logofile from './assets/logo.png'
-import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
 import { TriggerLists } from './BlockConfigs';
 import AddButton from './components/addButton';
 import AddbuttonListItem from './components/addbuttonListItem';
@@ -23,38 +23,79 @@ const Logo = styled('img')
   }
 );
 
+type stagedType = {
+
+  index : number,
+  id: string,
+  value: number,
+  component: string,
+
+}
 
 
 function App() {
-  const onBeforeCapture = useCallback(() => {
-    /*...*/
-  }, []);
-  const onBeforeDragStart = useCallback(() => {
-    /*...*/
-  }, []);
-  const onDragStart = useCallback(() => {
-    /*...*/
-  }, []);
-  const onDragUpdate = useCallback(() => {
-    /*...*/
-  }, []);
-  const onDragEnd = useCallback(() => {
-    // the only one that is required
-  }, []);
 
+  const [blocks, setBlocks] = useState<(stagedType | null)[][]>([[],[],[],[],[],[],[],[],[],[],[],[],[]]);
 
-  const [blocks, setBlocks] = useState([[],[],[],[],[],[],[],[],[],[],[],[],[]]);
+  const [staged, setStaged] = useState<stagedType | null>();
 
-  const [staged, setStaged] = useState({
-    
-    index : 0,
-    id : "dummy",
-    component : "nil",
-    value : 0,
+  const onDragEnd = (result: DropResult) => {
 
-  });
+    console.log(result);
+    const {source, destination} = result;
 
-  
+    //パレットから
+    if ( source.droppableId === 'Maker')
+    {
+      if (destination && staged)
+      {
+        
+        const _blocks = blocks;
+        const index = TriggerLists.findIndex((element)=>element.id == destination.droppableId);
+
+        _blocks[index].splice(destination.index, 0, staged);
+
+        setStaged(null);
+
+        setBlocks(_blocks);
+        console.log(blocks);
+      }
+     
+
+    }
+
+    //同じところ
+    if ( source.droppableId === destination?.droppableId)
+    {
+      const index = TriggerLists.findIndex((element)=>element.id === source.droppableId);
+      const _blocks = blocks;
+      const _insertdata = _blocks[index][source.index];
+
+      _blocks[index].splice(source.index, 1);
+      _blocks[index].splice(destination.index, 0, _insertdata);
+
+      setBlocks(_blocks);
+
+    }
+    else
+    {
+      if (destination)
+      {
+        const sourceIndex = TriggerLists.findIndex((element)=>element.id === source.droppableId);
+        const destIndex = TriggerLists.findIndex((element)=>element.id === destination.droppableId);
+        
+        const _blocks = blocks;
+        const _insertdata = _blocks[sourceIndex][source.index];
+
+        _blocks[sourceIndex].splice(source.index, 1);
+        _blocks[destIndex].splice(destination.index, 0, _insertdata);
+      }
+      
+    }
+
+    TriggerLists.findIndex((element)=>{element.id === source.droppableId})
+
+  };
 
 
 
@@ -70,10 +111,6 @@ function App() {
 
 
       <DragDropContext
-        onBeforeCapture={onBeforeCapture}
-        onBeforeDragStart={onBeforeDragStart}
-        onDragStart={onDragStart}
-        onDragUpdate={onDragUpdate}
         onDragEnd={onDragEnd}
       >
 
@@ -100,7 +137,7 @@ function App() {
                     <Typography variant='body1'>{Trigger.Name}</Typography>
                     <Typography variant='body2' sx={{color:"#909090", fontSize:"12px"}}>{Trigger.AlternativeName}</Typography>
                     
-                    <Droppable droppableId={uuid()} key={uuid()}>
+                    <Droppable droppableId={Trigger.id} key={uuid()}>
                       {(provided, snapshot) => (
                         <div
                           ref={provided.innerRef}
@@ -109,10 +146,13 @@ function App() {
                     
                         <Stack gap={1} sx={{mt:2, p:2, backgroundColor:"#F0F0F0", borderRadius:"5px"}}>
                           
-                          {/*ここにブロックが入る */}
+
                           {blocks[index].map((block,i)=>(
                             
-                            block
+                            // ここにブロック
+                            <>
+                              {block? cloneElement(codeblockindex[block.component] as ReactElement, { index: i, id: block.id }) : <></>}
+                            </>
 
                           ))}
                           
@@ -156,7 +196,7 @@ function App() {
                           {/* ここにブロック */}
 
                           <>
-                            {cloneElement(codeblockindex[staged.component] as ReactElement, { index: 0, id: staged.id })}
+                            {staged? cloneElement(codeblockindex[staged.component] as ReactElement, { index: 0, id: staged.id }): <></>}
                           </>
 
                           {provided.placeholder}
