@@ -1,21 +1,24 @@
 import { ReactNode } from "react";
 
-import CodeBlockMove from "./codeblockMove";
-import CodeBlockRot from "./codeblockRot";
+import CodeBlockMove from "./CodeblockItems/codeblockMove";
+import { BlockType } from "../../App";
 
 
-const dummyid = 'dummy';
+const dummydata: BlockType = {
+    id: "dummy",
+    component: "nil",
+}
 
 export const codeblockindex : {[key:string] : ReactNode} = {
 
     'nil' : <></>,
-    'move' : <CodeBlockMove id={dummyid} index={0}/>,
-    'rot' : <CodeBlockRot id={dummyid} index={0}/>,
-    'handud' : <CodeBlockMove id={dummyid} index={0}/>,
-    'handoc' : <CodeBlockMove id={dummyid} index={0}/>,
-    'r_led' : <CodeBlockMove id={dummyid} index={0}/>,
-    'g_led' : <CodeBlockMove id={dummyid} index={0}/>,
-    'b_led' : <CodeBlockMove id={dummyid} index={0}/>,
-    'wait' : <CodeBlockMove id={dummyid} index={0}/>,
+    'move' : <CodeBlockMove index={0} GroupIndex={0} data={dummydata} Update={()=>{}} Delete={()=>{}}/>,
+    'rot' : <CodeBlockMove index={0} GroupIndex={0} data={dummydata} Update={()=>{}} Delete={()=>{}}/>,
+    'handud' : <CodeBlockMove index={0} GroupIndex={0} data={dummydata} Update={()=>{}} Delete={()=>{}}/>,
+    'handoc' : <CodeBlockMove index={0} GroupIndex={0} data={dummydata} Update={()=>{}} Delete={()=>{}}/>,
+    'g_led' : <CodeBlockMove index={0} GroupIndex={0} data={dummydata} Update={()=>{}} Delete={()=>{}}/>,
+    'b_led' : <CodeBlockMove index={0} GroupIndex={0} data={dummydata} Update={()=>{}} Delete={()=>{}}/>,
+    'r_led' : <CodeBlockMove index={0} GroupIndex={0} data={dummydata} Update={()=>{}} Delete={()=>{}}/>,
+    'wait' : <CodeBlockMove index={0} GroupIndex={0} data={dummydata} Update={()=>{}} Delete={()=>{}}/>,
     
 }
