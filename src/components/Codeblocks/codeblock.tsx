@@ -9,7 +9,6 @@ type pr = {
     id : string,
     
     Delete: Function,
-    setVis: Function,
 
     GroupIndex: number,
     index: number,
@@ -23,7 +22,6 @@ const Codeblock = (props: pr) => {
   const HandleDelete = () => {
 
     props.Delete(props.GroupIndex, props.index);
-    props.setVis(false);
   }
 
   return (
