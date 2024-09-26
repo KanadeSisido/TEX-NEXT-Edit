@@ -284,22 +284,22 @@ function App() {
               <Paper elevation={3} sx={{ p: 3, ml:1}}>
                 
                 {/* 以下にブロック */}
-                <AddButton name='ロボットを動かす'>
-                  <AddbuttonListItem Name='ロボットを移動させる' NameAlternative='ロボットをいどうさせる' icon={<ControlCameraIcon />} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'move'})}/>
+                <AddButton name='ロボットを動かす' sx={{backgroundColor: "#FFE0E0"}}>
+                  <AddbuttonListItem  Name='ロボットを移動させる' NameAlternative='ロボットをいどうさせる' icon={<ControlCameraIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'move'})}/>
                   <AddbuttonListItem Name='ロボットを回転させる' NameAlternative='ロボットをまわす' icon={<ThreeSixtyIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'rot'})}/>
                 </AddButton>
                 
-                <AddButton name='ハンドを動かす'>
+                <AddButton name='ハンドを動かす' sx={{backgroundColor: "#E0FFE0"}}>
                   <AddbuttonListItem Name='ハンドを上下に動かす' NameAlternative='ハンドをじょうげにうごかす' icon={<SwapVertIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'handud'})}/>
                   <AddbuttonListItem Name='ハンドを開閉させる' NameAlternative='ハンドをひらく・とじる' icon={<SyncAltIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'handoc'})}/>
                 </AddButton>
                 
-                <AddButton name='LEDを光らせる'>
-                  <AddbuttonListItem Name='赤色のLEDを光らせる・消す' NameAlternative='あかいろのLEDをひからせる・けす' icon={<LightModeIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'r_led'})}/>
-                  <AddbuttonListItem Name='緑色のLEDを光らせる・消す' NameAlternative='みどりいろのLEDをひからせる・けす' icon={<LightModeIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'g_led'})}/>
-                  <AddbuttonListItem Name='青色のLEDを光らせる・消す' NameAlternative='あおいろのLEDをひからせる・けす' icon={<LightModeIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'b_led'})}/>
+                <AddButton name='LEDを光らせる' sx={{backgroundColor: "#FEFEFE"}}>
+                  <AddbuttonListItem Name='赤色のLEDを光らせる・消す' NameAlternative='あかいろのLEDをひからせる・けす' icon={<LightModeIcon sx={{color:"#F06060"}}/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'r_led'})}/>
+                  <AddbuttonListItem Name='緑色のLEDを光らせる・消す' NameAlternative='みどりいろのLEDをひからせる・けす' icon={<LightModeIcon sx={{color:"#60F060"}}/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'g_led'})}/>
+                  <AddbuttonListItem Name='青色のLEDを光らせる・消す' NameAlternative='あおいろのLEDをひからせる・けす' icon={<LightModeIcon sx={{color:"#6060F0"}}/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'b_led'})}/>
                 </AddButton>
-                <AddButton name='時間を待つ'>
+                <AddButton name='時間を待つ' sx={{backgroundColor: "#E0E0FF"}}>
                   <AddbuttonListItem Name='待機する' NameAlternative='じかんをまつ' icon={<AccessAlarmIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'wait'})}/>
                 </AddButton>
                 

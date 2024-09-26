@@ -15,6 +15,7 @@ type pr = {
 
     icon: ReactNode,
     children?: ReactNode,
+    sx? : Object,
 };
 
 const Codeblock = (props: pr) => {
@@ -40,6 +41,7 @@ const Codeblock = (props: pr) => {
           <Card elevation={1} sx={{
             maxWidth:"500px",
             p: 2,
+            ...props.sx,
             
             }}>
               <Stack direction='row' sx={{alignItems:"center"}}>
