@@ -1,6 +1,6 @@
 import Codeblock from '../codeblock'
 import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import ControlCameraIcon from '@mui/icons-material/ControlCamera';
+import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import { BlockType } from '../../../App';
 
 type pr = {
@@ -8,6 +8,7 @@ type pr = {
     GroupIndex: number,
     index: number,
     data: BlockType,
+
     Update : Function,
     Delete : Function,
 }
@@ -23,23 +24,21 @@ const CodeBlockMove = (props : pr) => {
 
     return (
     <>
-        <Codeblock Name={"ロボットを移動させる"} AlternativeName='ロボットをいどうさせる' id={props.data.id} index={props.index} GroupIndex={props.GroupIndex} icon={<ControlCameraIcon sx={{color:"#505050"}}/>} Delete={props.Delete} sx={{backgroundColor: "#FFE0E0"}}>
+        <Codeblock Name={"ハンドを開閉させる"} AlternativeName='ハンドをひらく・とじる' id={props.data.id} index={props.index} GroupIndex={props.GroupIndex} icon={<SyncAltIcon sx={{color:"#505050"}}/>} Delete={props.Delete} sx={{backgroundColor: "#E0FFE0"}}>
             <Box sx={{ minWidth: 120 }}>
                 <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">方向</InputLabel>
+                    <InputLabel id="demo-simple-select-label">設定</InputLabel>
                     <Select
                     labelId={"demo-simple-select-label-" + props.index}
                     id="demo-simple-select"
                     value={props.data.value? props.data.value: ""}
-                    label="方向を入力"
+                    label="設定"
                     onChange={(e: SelectChangeEvent)=>{HandleEvent(e.target.value)}}
                     >
 
-                        <MenuItem value={1}>前</MenuItem>
-                        <MenuItem value={2}>後</MenuItem>
-                        <MenuItem value={3}>左</MenuItem>
-                        <MenuItem value={4}>右</MenuItem>
-                        
+                        <MenuItem value={1}>開く</MenuItem>
+                        <MenuItem value={2}>閉じる</MenuItem>
+
                     </Select>
                 </FormControl>
             </Box>

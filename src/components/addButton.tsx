@@ -8,11 +8,12 @@ type pr = {
     name : string,
     index? : number,
     children? : ReactNode,
+    sx? : Object,
 }
 
 const AddButton = (props: pr) => {
   return (
-    <Accordion elevation={3}>
+    <Accordion elevation={3} sx={props.sx}>
         <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"

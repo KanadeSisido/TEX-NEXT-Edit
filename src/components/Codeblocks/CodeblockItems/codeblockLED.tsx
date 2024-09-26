@@ -1,6 +1,6 @@
 import Codeblock from '../codeblock'
 import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import ControlCameraIcon from '@mui/icons-material/ControlCamera';
+import LightModeIcon from '@mui/icons-material/LightMode';
 import { BlockType } from '../../../App';
 
 type pr = {
@@ -8,6 +8,10 @@ type pr = {
     GroupIndex: number,
     index: number,
     data: BlockType,
+    iconColor: string,
+    Color: string,
+    AlterColor: string,
+
     Update : Function,
     Delete : Function,
 }
@@ -23,23 +27,21 @@ const CodeBlockMove = (props : pr) => {
 
     return (
     <>
-        <Codeblock Name={"ロボットを移動させる"} AlternativeName='ロボットをいどうさせる' id={props.data.id} index={props.index} GroupIndex={props.GroupIndex} icon={<ControlCameraIcon sx={{color:"#505050"}}/>} Delete={props.Delete} sx={{backgroundColor: "#FFE0E0"}}>
+        <Codeblock Name={props.Color + "色のLEDを光らせる・消す"} AlternativeName={props.AlterColor + 'いろのLEDをひからせる・けす'} id={props.data.id} index={props.index} GroupIndex={props.GroupIndex} icon={<LightModeIcon sx={{color:props.iconColor}}/>} Delete={props.Delete} sx={{backgrondColor:'#FEFEFE'}}>
             <Box sx={{ minWidth: 120 }}>
                 <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">方向</InputLabel>
+                    <InputLabel id="demo-simple-select-label">設定</InputLabel>
                     <Select
                     labelId={"demo-simple-select-label-" + props.index}
                     id="demo-simple-select"
                     value={props.data.value? props.data.value: ""}
-                    label="方向を入力"
+                    label="設定"
                     onChange={(e: SelectChangeEvent)=>{HandleEvent(e.target.value)}}
                     >
 
-                        <MenuItem value={1}>前</MenuItem>
-                        <MenuItem value={2}>後</MenuItem>
-                        <MenuItem value={3}>左</MenuItem>
-                        <MenuItem value={4}>右</MenuItem>
-                        
+                        <MenuItem value={1}>光らせる</MenuItem>
+                        <MenuItem value={2}>消す</MenuItem>
+
                     </Select>
                 </FormControl>
             </Box>
