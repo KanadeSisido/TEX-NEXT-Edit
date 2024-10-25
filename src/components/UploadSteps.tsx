@@ -1,5 +1,4 @@
 import { Step, StepLabel, Stepper } from '@mui/material'
-import React from 'react'
 
 type pr = {
 

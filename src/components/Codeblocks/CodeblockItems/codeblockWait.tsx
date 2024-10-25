@@ -1,5 +1,5 @@
 import Codeblock from '../codeblock'
-import { Box, Button, Divider, Menu, MenuItem, Slider, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, Menu, Slider, Typography } from '@mui/material'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 
 import { BlockType } from '../../../App';
@@ -33,7 +33,6 @@ const CodeBlockMove = (props : pr) => {
 
     const HandleChange = (event: Event, _value: number | number[]) => {
 
-        
         setValue(_value as number);
     }
 

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "networkhost": "vite --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -16,8 +17,10 @@
     "@hello-pangea/dnd": "^17.0.0",
     "@mui/icons-material": "^6.1.1",
     "@mui/material": "^6.1.1",
+    "firebase": "^10.14.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-firebase-hooks": "^5.1.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

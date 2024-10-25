@@ -1,7 +1,7 @@
-import { Accordion, AccordionSummary, Card, List } from '@mui/material'
+import { Accordion, AccordionSummary, List } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 type pr = {
 

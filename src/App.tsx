@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, useState } from 'react';
+import { cloneElement, ReactElement, useEffect, useState } from 'react';
 import { Alert, AppBar, Backdrop, Box, Button, Divider, IconButton, Paper, Snackbar, Stack, styled, TextField, Toolbar, Typography } from '@mui/material'
 import Logofile from './assets/logo.png';
 
@@ -17,7 +17,10 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 import UploadSteps from './components/UploadSteps';
 import CloseIcon from '@mui/icons-material/Close';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from './firebase';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+
 
 const Logo = styled('img')
 (
@@ -35,17 +38,26 @@ export type BlockType = {
 }
 
 
+
+
 function App() {
 
   const [blocks, setBlocks] = useState<(BlockType | null)[][]>([[],[],[],[],[],[],[],[],[],[],[],[],[]]);
 
   const [staged, setStaged] = useState<BlockType | null>();
+  const [awakeCond, setAwakeCond] = useState(false);
 
   const [openCombert, setOpenCombert] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
-
-  const [CppCode, setCppCode] = useState("This is Dummy Code");
   const [snack, setSnack] = useState(false);
+  const [uploaded, setUploaded] = useState(false);
+  const [duration, setDuration] = useState(false);
+
+  const [userID, setUserID] = useState("");
+  const [password, setPassword] = useState("");
+  const [uName, setUName] = useState("");
+  const [uid, setUid] = useState("");
+  const [invalidPass, setInvalidPass] = useState(false);
 
   function Update(GroupIndex: number, Index: number, Value: string){
 
@@ -104,6 +116,7 @@ function App() {
       return;
     }
 
+
     //パレットから
     if ( source.droppableId === 'Maker')
     {
@@ -112,6 +125,12 @@ function App() {
         
         const _blocks = [...blocks];
         const index = TriggerLists.findIndex((element)=>(element.id == destination.droppableId));
+
+        if(staged && destination.droppableId == 'onAwaken' && ['move', 'rot', 'handud', 'handoc'].includes(staged.component))
+        {
+          setAwakeCond(true);
+          return;
+        }
 
         _blocks[index].splice(destination.index, 0, staged);
 
@@ -138,6 +157,7 @@ function App() {
       const _blocks = [...blocks];
       const _insertdata = _blocks[index][source.index];
 
+
       _blocks[index].splice(source.index, 1);
       _blocks[index].splice(destination.index, 0, _insertdata);
 
@@ -155,6 +175,14 @@ function App() {
         const _blocks = [...blocks];
         const _insertdata = _blocks[sourceIndex][source.index];
 
+        console.log("ins", _insertdata);
+
+        if(_insertdata && destination.droppableId == 'onAwaken' && ['move', 'rot', 'handud', 'handoc'].includes(_insertdata.component))
+        {
+          setAwakeCond(true);
+          return;
+        }
+
         _blocks[sourceIndex].splice(source.index, 1);
         _blocks[destIndex].splice(destination.index, 0, _insertdata);
 
@@ -168,7 +196,78 @@ function App() {
 
   };
 
+  const TryLogin = ()=>{
 
+    let unsubscribe : (()=>void);
+
+    signInWithEmailAndPassword(auth, (userID + "@example.com") , password).then(
+      ()=>{
+        setStepIndex(1);
+        setUName(userID);
+        
+        unsubscribe = onAuthStateChanged(auth, async (user)=>{
+          console.log(user);
+          if(user)
+          {
+            console.log(user.uid);
+            setUid(user.uid);
+
+          }
+
+        })
+      }
+    ).catch((e)=>{
+
+      console.log(e);
+      setInvalidPass(true);
+
+    })
+
+
+
+    useEffect(()=>{
+      return () => {
+        unsubscribe();
+      }
+
+
+    },[]);
+
+  }
+
+ 
+
+  async function UploadData(userId: string, userData: (BlockType | null)[][])
+  {
+    try{
+
+      const uploadBlocks = {
+        'onAwaken' : userData[0],
+        'onJoyStickFront' : userData[1],
+        'onJoyStickBack' : userData[2],
+        'onJoyStickRight' : userData[3],
+        'onJoyStickLeft' : userData[4],
+        'onMaruButton': userData[5],
+        'onBatuButton' : userData[6],
+        'onSankakuButton' : userData[7],
+        'onShikakuButton': userData[8],
+        'onL1Button' : userData[9],
+        'onL2Button' : userData[10],
+        'onR1Button' : userData[11],
+        'onR2Button' : userData[12],
+      }
+
+      const uploadData = {createdBy: uid, data:uploadBlocks}
+      console.log(uploadData);
+      await setDoc(doc(db, "userData", userId), uploadData);
+      setUploaded(true);
+      setSnack(true);
+      setDuration(true);
+    }
+    catch(error){
+      console.error(error);
+    }
+  }
 
   return (
    <>
@@ -176,7 +275,10 @@ function App() {
       <AppBar position="sticky" color='default'>
         <Toolbar sx={{display:'flex', justifyContent:'space-between', mx:1}}>
           <Logo src={Logofile}/>
-          <Button color="primary" variant="contained" onClick={()=>{setOpenCombert(true);}}>コンバート</Button>
+          <Stack gap={1} direction="row">
+            <Button color="primary" variant="contained" onClick={()=>{setOpenCombert(true);}}>アップロード</Button>
+            <Button color="primary" variant="outlined" onClick={()=>{signOut(auth); window.location.reload();}}>ログアウト</Button>
+          </Stack>
         </Toolbar>
       </AppBar>
 
@@ -319,39 +421,50 @@ function App() {
         onClick={()=>{}}
       >
         
-        <Paper sx={{width:"60vw", height: "80vh", p: 2}}>
+        <Paper sx={{width:"50vw", height: "70vh", p: 4}}>
           <Stack direction='column' sx={{height: '100%'}}>
             <Box sx={{display:'flex', justifyContent: 'right'}}>
-              <IconButton onClick={()=>setOpenCombert(false)} sx={{}}><CloseIcon/></IconButton>
+              <IconButton onClick={()=>{setOpenCombert(false); setDuration(false)}} sx={{}}><CloseIcon/></IconButton>
             </Box>
             <Stack sx={{mt:2, height: '100%'}}>
               
-              <UploadSteps steps={["コンバート結果","ログイン","リザルト"]} stepIndex={stepIndex}/>
+              <UploadSteps steps={["ログイン", "アップロード","リザルト"]} stepIndex={stepIndex}/>
               <>
               
               {
                 //コンバート結果
                 (stepIndex == 0)?
-                  <Box sx={{display: 'flex', flexDirection:'column'}}>
-                    <Paper elevation={2} sx={{p: 3, mt: 6}}>
-                      <Stack sx={{}}>
-                        <Box sx={{mb:2, display:'flex', justifyContent: 'space-between', alignItems:'center'}}>
-                          <Typography>コード</Typography>
-                          <IconButton onClick={async ()=>{ await navigator.clipboard.writeText(CppCode); setSnack(true);}}><ContentCopyIcon/></IconButton>
-                        </Box>
-                        <Box sx={{p: 2, flexGrow:1, overflowY: 'scroll', height: '250px', backgroundColor:"#E0E0E0"}}>
-                          <Typography>
-                            {CppCode}
-                          </Typography>
-                        </Box>
-                      </Stack>
-                    </Paper>
-                    <Box sx={{display: 'flex', justifyContent: 'end', mt:3}}>
-                      <Button variant='contained' onClick={()=>setStepIndex(1)}>次へ</Button>
+                <Stack>
+                    <Box gap={2} sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 8, mb: 4}}>
+                      <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap:1, mb:2}}>
+                        <Typography variant='h5'>ログイン</Typography>
+                        <Typography variant='body1' sx={{fontSize:14}}>アップロードするにはログインしてください</Typography>
+                      </Box>
+                      
+                          <TextField required
+                            id="read-only-userID"
+                            label="ユーザID"
+                            value={userID}
+                            error={invalidPass}
+                            onChange={e=> setUserID(e.target.value)}
+                            sx={{width: 300}}
+                          />
+                          <TextField required
+                            id="read-only-userID"
+                            label="パスワード"
+                            value={password}   
+                            error={invalidPass}
+                            helperText={invalidPass? "ACCESS ID または パスワードが間違っています": ""}                     
+                            onChange={e=>setPassword(e.target.value)}
+                            sx={{width: 300}}
+                          />
+                          
                     </Box>
-                  </Box>
+                    <Box sx={{display: 'flex', justifyContent: 'end', mt: 3}}>
+                      <Button variant='contained' onClick={()=>TryLogin()}>ログイン</Button>
+                    </Box>
+                </Stack>
                 :(stepIndex == 1)?
-                  //ログイン
                   <Stack>
                     <Box gap={4} sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 8, mb: 4}}>
                       <Typography variant='h5'>コードをアップロード</Typography>
@@ -360,63 +473,35 @@ function App() {
                           <TextField
                             id="read-only-userID"
                             label="ユーザID"
-                            defaultValue="001"
+                            defaultValue={uName}
                             slotProps={{
                               input: {
                                 readOnly: true,
                               },
                             }}
                           />
-                          <Button variant='outlined'>アップロード</Button>
+                          <Button variant='outlined' disabled={duration} onClick={() => UploadData(uName, blocks)}>アップロード</Button>
                         </Box>
 
 
-                        <Alert severity='success' >データベースとの接続は確立されています</Alert>
-
-                      
-
-                      
+                        <Alert severity='info' >利用規約をご確認の上，コードをアップロードしてください</Alert>
                     </Box>
                     <Box sx={{display: 'flex', justifyContent: 'end', mt: 3}}>
-                      <Button onClick={()=>setStepIndex(0)}>戻る</Button>
-                      <Button variant='contained' onClick={()=>setStepIndex(2)}>次へ</Button>
+                      <Button variant='contained' disabled={!uploaded} onClick={()=>{setStepIndex(2); setDuration(false);}}>次へ</Button>
                     </Box>
-                  </Stack>
+                </Stack>
                 :
-                  //リザルト 
                 <Stack>
-                    <Box gap={4} sx={{display: 'flex', flexDirection:'column', alignItems: 'center', pt: 8, mb: 4}}>        
-                      <Typography variant='h5'>アップロード完了</Typography>
-                      <TextField
-                        id="read-only-userID"
-                        label="ユーザID"
-                        defaultValue="001"
-                        slotProps={{
-                          input: {
-                            readOnly: true,
-                          },
-                        }}
+                  <Box gap={4} sx={{display: 'flex', flexDirection:'column', alignItems: 'center', pt: 8, mb: 4}}>        
+                    <Typography variant='h5'>アップロード完了</Typography>
+                    <Typography>アップロードが完了しました．<br/>ロボットの準備ができるまで少々お待ちください．</Typography>
+                  </Box>
+                  <Box sx={{display: 'flex', justifyContent: 'end', mt: 3}}>
+                    <Button onClick={()=>setStepIndex(1)}>戻る</Button>
+                    <Button variant='contained' onClick={()=>{setOpenCombert(false); signOut(auth); window.location.reload();}}>終了する</Button>
+                  </Box>
+                </Stack>
 
-                      sx={{width: "300px"}}
-                      />
-                      <TextField
-                        id="read-only-userID"
-                        label="パスワード"
-                        defaultValue="Password"
-                        slotProps={{
-                          input: {
-                            readOnly: true,
-                          },
-                        }}
-
-                        sx={{width: "300px"}}
-                      />
-                    </Box>
-                    <Box sx={{display: 'flex', justifyContent: 'end', mt: 3}}>
-                      <Button onClick={()=>setStepIndex(1)}>戻る</Button>
-                      <Button variant='contained' onClick={()=>setOpenCombert(false)}>閉じる</Button>
-                    </Box>
-                  </Stack>
               }
               </>
               
@@ -424,18 +509,23 @@ function App() {
 
           </Stack>
         </Paper>
+        
         <Snackbar
           open={snack}
           autoHideDuration={5000}
           onClose={()=>setSnack(false)}
-          message="コピーしました"
-        />
-        
-        
-
-        
+          message="アップロード完了"
+        />        
 
       </Backdrop>
+      
+      <Snackbar
+          open={awakeCond}
+          autoHideDuration={5000}
+          onClose={()=>{setAwakeCond(false); console.log("close")}}
+          message="「ロボット起動時」にそのブロックは置けません"
+      />
+      
    </>
   )
 }
