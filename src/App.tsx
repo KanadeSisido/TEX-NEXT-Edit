@@ -401,9 +401,7 @@ function App() {
                   <AddbuttonListItem Name='緑色のLEDを光らせる・消す' NameAlternative='みどりいろのLEDをひからせる・けす' icon={<LightModeIcon sx={{color:"#60F060"}}/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'g_led'})}/>
                   <AddbuttonListItem Name='青色のLEDを光らせる・消す' NameAlternative='あおいろのLEDをひからせる・けす' icon={<LightModeIcon sx={{color:"#6060F0"}}/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'b_led'})}/>
                 </AddButton>
-                <AddButton name='時間を待つ' sx={{backgroundColor: "#E0E0FF"}}>
-                  <AddbuttonListItem Name='待機する' NameAlternative='じかんをまつ' icon={<AccessAlarmIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'wait'})}/>
-                </AddButton>
+
                 
               
 
