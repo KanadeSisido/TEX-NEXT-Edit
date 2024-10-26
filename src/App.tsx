@@ -46,6 +46,8 @@ function App() {
 
   const [staged, setStaged] = useState<BlockType | null>();
   const [awakeCond, setAwakeCond] = useState(false);
+  const [waitCond, setWaitCond] = useState(false);
+  
 
   const [openCombert, setOpenCombert] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
@@ -131,6 +133,11 @@ function App() {
           setAwakeCond(true);
           return;
         }
+        else if(staged && !['onAwaken','Maker'].includes(destination.droppableId) && staged.component == 'wait')
+        {
+          setWaitCond(true);
+          return;
+        }
 
         _blocks[index].splice(destination.index, 0, staged);
 
@@ -180,6 +187,11 @@ function App() {
         if(_insertdata && destination.droppableId == 'onAwaken' && ['move', 'rot', 'handud', 'handoc'].includes(_insertdata.component))
         {
           setAwakeCond(true);
+          return;
+        }
+        else if(_insertdata && destination.droppableId != 'onAwaken' && _insertdata.component == 'wait')
+        {
+          setWaitCond(true);
           return;
         }
 
@@ -402,7 +414,9 @@ function App() {
                   <AddbuttonListItem Name='青色のLEDを光らせる・消す' NameAlternative='あおいろのLEDをひからせる・けす' icon={<LightModeIcon sx={{color:"#6060F0"}}/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'b_led'})}/>
                 </AddButton>
 
-                
+                <AddButton name='時間を待つ' sx={{backgroundColor: "#E0E0FF"}}>
+                  <AddbuttonListItem Name='待機する' NameAlternative='じかんをまつ' icon={<AccessAlarmIcon/>} onclick={ ()=>setStaged({id: uuid(), value: "", component: 'wait'})}/>
+                </AddButton>
               
 
               </Paper>
@@ -522,6 +536,12 @@ function App() {
           autoHideDuration={5000}
           onClose={()=>{setAwakeCond(false); console.log("close")}}
           message="「ロボット起動時」にそのブロックは置けません"
+      />
+      <Snackbar
+          open={waitCond}
+          autoHideDuration={5000}
+          onClose={()=>{setWaitCond(false); console.log("close")}}
+          message="そこに「時間を待つ」ブロックは置けません"
       />
       
    </>
