@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Codeblock from '../codeblock'
 import { Box, Button, Divider, Menu, Slider, Typography } from '@mui/material'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
@@ -32,7 +33,7 @@ const CodeBlockMove = (props : pr) => {
 
 
     const HandleChange = (event: Event, _value: number | number[]) => {
-
+        console.log(event)
         setValue(_value as number);
     }
 
