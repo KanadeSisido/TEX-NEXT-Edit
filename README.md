@@ -6,7 +6,7 @@
 - Vite
 - TypeScript
 - MUI(Material UI)
-- react-beautiful-dnd
+- @hello-pangea/dnd / https://github.com/hello-pangea/dnd
 - Firebase
 
 # 開発開始手順
